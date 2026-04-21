@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center">
+    <main class="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+        <h1 class="text-2xl font-semibold text-center mb-6">Sign in to your account</h1>
+
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label for="text-time" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <input id="text-time" name="name" type="text" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    placeholder="Enter username" />
+            </div>
+
+            <div>
+                <label for="pass-key" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input id="pass-key" name="password" type="password" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    placeholder="Enter password" />
+            </div>
+
+            <button type="submit"
+                class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                Login
+            </button>
+
+            <p class="text-sm text-center text-gray-600">
+                Don't have an account?
+                <a href="signup.html" class="text-indigo-600 hover:underline">Sign Up</a>
+            </p>
+        </form>
+    </main>
+
+    <script>
+    (function () {
+        const API = "http://localhost:3000"; // adjust if your server uses a different host/port
+        const form = document.getElementById('loginForm');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const name = document.getElementById('text-time').value.trim();
+            const password = document.getElementById('pass-key').value.trim();
+
+            if (!name || !password) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            try {
+                const res = await axios.post(`${API}/login`, { name, password });
+                alert(res.data?.message || 'Login successful');
+                console.log(res.data);
+
+                // Redirect if backend returns success and you want to move to a dashboard
+                // if (res.status === 200) window.location.href = 'dashboard.html';
+            } catch (err) {
+                alert(err.response?.data?.message || 'Login failed');
+                console.error(err);
+            }
+        });
+    })();
+    </script>
+</body>
+</html>
