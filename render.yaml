@@ -1,0 +1,36 @@
+# Render Blueprint: deploy the API and React frontend together.
+# Before creating the Render Blueprint, create a MongoDB Atlas database and have its
+# connection URI ready. Render will prompt for MONGO_URI because sync is disabled.
+services:
+  - type: web
+    name: computer-deposit-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_ORIGIN
+        fromService:
+          type: web
+          name: computer-deposit-tracker
+          envVarKey: RENDER_EXTERNAL_URL
+
+  - type: web
+    runtime: static
+    name: computer-deposit-tracker
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: computer-deposit-api
+          envVarKey: RENDER_EXTERNAL_URL

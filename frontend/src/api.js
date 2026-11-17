@@ -1,7 +1,9 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const configuredOrigin = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/+$/, "");
+const API_URL = configuredOrigin.endsWith("/api") ? configuredOrigin : `${configuredOrigin}/api`;
 
 export async function api(path, { token, ...options } = {}) {
-  const response = await fetch(`${API_URL}${path}`, {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const response = await fetch(`${API_URL}${normalizedPath}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
